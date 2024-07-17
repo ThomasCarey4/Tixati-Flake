@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Tixati
+Exec=steam-run /bin/tixati
+Icon=tixati
+Categories=Network;FileTransfer;
