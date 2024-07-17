@@ -18,16 +18,14 @@
         nativeBuildInputs = [ pkgs.makeWrapper ];
 
         installPhase = ''
-          mkdir -p $out
-          mkdir -p $out/share/applications
+          mkdir -p $out/bin
+          cp $src/bin/tixati $out/bin/tixati
+
           mkdir -p $out/share/icons/hicolor/48x48/apps
-          cp share/applications/tixati.desktop $out/share/applications
-          cp share/icons/hicolor/48x48/apps/tixati.png $out/share/icons/hicolor/48x48/apps
-          wget https://download2.tixati.com/download/tixati-3.26-1.x86_64.manualinstall.tar.gz
-          tar -xzvf tixati-3.26-1.x86_64.manualinstall.tar.gz
-          mv tixati-3.26-1.x86_64.manualinstall/tixati $out/bin
-          rm -rf tixati-3.26-1.x86_64.manualinstall
-          rm tixati-3.26-1.x86_64.manualinstall.tar.gz
+          cp $src/share/icons/hicolor/48x48/apps/tixati.png $out/share/icons/hicolor/48x48/apps/tixati.png
+
+          mkdir -p $out/share/applications
+          cp $src/share/applications/tixati.desktop $out/share/applications/tixati.desktop
         '';
 
         meta = with pkgs.lib; {
