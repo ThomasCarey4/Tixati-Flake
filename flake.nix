@@ -19,7 +19,15 @@
 
         installPhase = ''
           mkdir -p $out
-          cp -r * $out/
+          mkdir -p $out/share/applications
+          mkdir -p $out/share/icons/hicolor/48x48/apps
+          cp share/applications/tixati.desktop $out/share/applications
+          cp share/icons/hicolor/48x48/apps/tixati.png $out/share/icons/hicolor/48x48/apps
+          wget https://download2.tixati.com/download/tixati-3.26-1.x86_64.manualinstall.tar.gz
+          tar -xzvf tixati-3.26-1.x86_64.manualinstall.tar.gz
+          mv tixati-3.26-1.x86_64.manualinstall/tixati $out/bin
+          rm -rf tixati-3.26-1.x86_64.manualinstall
+          rm tixati-3.26-1.x86_64.manualinstall.tar.gz
         '';
 
         meta = with pkgs.lib; {
