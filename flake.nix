@@ -17,10 +17,10 @@
 
         nativeBuildInputs = [ pkgs.makeWrapper ];
 
-        # installPhase = ''
-        #   mkdir -p $out
-        #   cp -r * $out/
-        # '';
+        installPhase = ''
+          mkdir -p $out
+          cp -r * $out/
+        '';
 
         meta = with pkgs.lib; {
           description = "Tixati - A simple and easy to use BitTorrent client";
