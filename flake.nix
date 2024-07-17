@@ -6,7 +6,7 @@
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux"; # or the appropriate system for your architecture
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
     in
     {
       packages.${system}.tixati = pkgs.stdenv.mkDerivation rec {
@@ -17,10 +17,10 @@
 
         nativeBuildInputs = [ pkgs.makeWrapper ];
 
-        installPhase = ''
-          mkdir -p $out
-          cp -r * $out/
-        '';
+        # installPhase = ''
+        #   mkdir -p $out
+        #   cp -r * $out/
+        # '';
 
         meta = with pkgs.lib; {
           description = "Tixati - A simple and easy to use BitTorrent client";
