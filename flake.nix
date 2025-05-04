@@ -16,6 +16,28 @@
           allowUnfree = true;
         }; # :contentReference[oaicite:0]{index=0}
       };
+      desktopItem = pkgs.makeDesktopItem {
+        name = "Tixati";
+        genericName = "BitTorrent Client";
+        comment = "Share files over BitTorrent";
+        exec = "$out/bin/tixati %U";
+        icon = "tixati";
+        terminal = false;
+        type = "Application";
+        mimeType = [
+          "application/x-bittorrent"
+          "application/x-magnet"
+          "x-scheme-handler/magnet"
+          "x-scheme-handler/dsc"
+        ];
+        categories = [
+          "Internet"
+          "Network"
+          "FileTransfer"
+          "P2P"
+          "GTK"
+        ];
+      };
     in
     {
       # Expose as a package in this flake
@@ -42,7 +64,11 @@
         nativeBuildInputs = [
           pkgs.makeWrapper
           pkgs.autoPatchelfHook
+          pkgs.copyDesktopItems
+          pkgs.makeDesktopItem
         ];
+
+        desktopItems = [ desktopItem ];
 
         # Unpack and install everything into $out
         unpackPhase = "gzip -dc $src | tar xvf -";
