@@ -17,25 +17,26 @@
         }; # :contentReference[oaicite:0]{index=0}
       };
       desktopItem = pkgs.makeDesktopItem {
+        desktopName = "tixati";
         name = "Tixati";
         genericName = "BitTorrent Client";
         comment = "Share files over BitTorrent";
-        exec = "$out/bin/tixati %U";
+        exec = "\$out/bin/tixati \%U";
         icon = "tixati";
         terminal = false;
         type = "Application";
-        mimeType = [
+        mimeTypes = [
           "application/x-bittorrent"
           "application/x-magnet"
           "x-scheme-handler/magnet"
           "x-scheme-handler/dsc"
         ];
         categories = [
-          "Internet"
+          "X-Internet" # prefixed so it’s a valid “X-” extension
           "Network"
           "FileTransfer"
-          "P2P"
-          "GTK"
+          "X-P2P"
+          "X-GTK"
         ];
       };
     in
@@ -65,7 +66,6 @@
           pkgs.makeWrapper
           pkgs.autoPatchelfHook
           pkgs.copyDesktopItems
-          pkgs.makeDesktopItem
         ];
 
         desktopItems = [ desktopItem ];
