@@ -21,7 +21,7 @@
         name = "Tixati";
         genericName = "BitTorrent Client";
         comment = "Share files over BitTorrent";
-        exec = "\$out/bin/tixati \%U";
+        exec = "tixati %U";
         icon = "tixati";
         terminal = false;
         type = "Application";
