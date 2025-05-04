@@ -1,7 +1,12 @@
 [Desktop Entry]
 Version=1.0
-Type=Application
+Encoding=UTF-8
 Name=Tixati
-Exec=steam-run tixati
+GenericName=BitTorrent Client
+Comment=Share files over bittorrent
+Exec=steam-run tixati %U
 Icon=tixati
-Categories=Network;FileTransfer;
+Terminal=false
+Type=Application
+MimeType=application/x-bittorrent;x-scheme-handler/magnet;x-scheme-handler/dsc;application/x-magnet;
+Categories=Internet;Network;FileTransfer;P2P;GTK;
