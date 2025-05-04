@@ -1,53 +1,70 @@
 {
-  description = "Tixati - A simple and easy to use BitTorrent client";
+  inputs = {
+    # Use the latest nixpkgs for upstream support
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-
-  outputs = { self, nixpkgs }:
+  outputs =
+    { self, nixpkgs }:
     let
-      system = "x86_64-linux"; # or the appropriate system for your architecture
-      pkgs = import nixpkgs { inherit system; config.allowUnfree = true; };
+      system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        inherit system;
+
+        # Allow unfree binaries like Tixati
+        config = {
+          allowUnfree = true;
+        }; # :contentReference[oaicite:0]{index=0}
+      };
     in
     {
-      programs.nix-ld.enable = true;
-      programs.nix-ld.libraries = with pkgs; [
-        dbus
-      ];
+      # Expose as a package in this flake
       packages.${system}.tixati = pkgs.stdenv.mkDerivation rec {
         pname = "tixati";
-        version = "3.26"; # Update to the correct version if necessary
+        version = "3.34-1";
 
-        src = ./.;
+        # Fetch the manual-install tarball
+        src = pkgs.fetchurl {
+          url = "https://download.tixati.com/tixati-${version}.x86_64.manualinstall.tar.gz";
+          sha256 = "e2KCRqNSfkmwBygc7rFlio2o4fI+59y03FPnrVwognI="; # run `nix-prefetch-url <URL>` to get this :contentReference[oaicite:1]{index=1}
+        };
+        buildInputs = [
+          pkgs.dbus # D-Bus IPC core :contentReference[oaicite:11]{index=11}
+          pkgs.dbus-glib # D-Bus GLib bindings :contentReference[oaicite:12]{index=12}
+          pkgs.glib # Core GNOME libraries :contentReference[oaicite:13]{index=13}
+          pkgs.gtk3 # GTK3 GUI toolkit :contentReference[oaicite:14]{index=14}
+          pkgs.pango # Text layout/rendering :contentReference[oaicite:15]{index=15}
+          pkgs.cairo # 2D graphics library :contentReference[oaicite:16]{index=16}
+          # pkgs.gdk_pixbuf # Image loading/manipulation :contentReference[oaicite:17]{index=17}
+          pkgs.zlib # Compression support :contentReference[oaicite:18]{index=18}
+        ];
 
-        nativeBuildInputs = [ pkgs.makeWrapper ];
+        nativeBuildInputs = [
+          pkgs.makeWrapper
+          pkgs.autoPatchelfHook
+        ];
 
+        # Unpack and install everything into $out
+        unpackPhase = "gzip -dc $src | tar xvf -";
         installPhase = ''
-          mkdir -p $out/bin
-          mkdir -p $out/lib
-          mkdir -p $out/share/icons/hicolor/48x48/apps
-          mkdir -p $out/share/applications
-          echo "#!/usr/bin/env bash
-          steam-run $out/lib/tixati.binary" > $out/bin/tixati
+          mkdir -p $out/bin $out/lib
+          cp -r tixati-${version}.x86_64.manualinstall/* $out/
+          cp $out/tixati $out/bin/
 
-          chmod +x $out/bin/tixati
-          
-          cp $src/lib/tixati.binary $out/lib/tixati.binary
-          chmod +x $out/lib/tixati.binary
-          cp $src/share/icons/hicolor/48x48/apps/tixati.png $out/share/icons/hicolor/48x48/apps/tixati.png
-          
-          cp $src/share/applications/tixati.desktop $out/share/applications/tixati.desktop
+          # Wrap the launcher so it picks up its bundled .so files  
+          wrapProgram $out/bin/tixati \
+            --prefix LD_LIBRARY_PATH ":${pkgs.glib}/${pkgs.cairo}/${pkgs.dbus}/lib:$out/lib"
         '';
 
         meta = with pkgs.lib; {
-          description = "Tixati - A simple and easy to use BitTorrent client";
-          homepage = "https://www.tixati.com/";
+          description = "Tixati BitTorrent client (wrapped standalone binary)";
           license = licenses.unfree;
-          maintainers = with maintainers; [ "Thomas Carey" ];
-          platforms = platforms.linux;
+          platforms = [ "x86_64-linux" ];
         };
       };
 
-      # Expose the package as a NixOS module
+      # Make `nix run .#tixati` or `nix profile install .#tixati` work by default
+      defaultPackage.${system} = self.packages.${system}.tixati;
       devShell.${system} = pkgs.mkShell {
         buildInputs = [ self.packages.${system}.tixati ];
       };
