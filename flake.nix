@@ -44,12 +44,12 @@
       # Expose as a package in this flake
       packages.${system}.tixati = pkgs.stdenv.mkDerivation rec {
         pname = "tixati";
-        version = "3.34-1";
+        version = "3.38-1";
 
         # Fetch the manual-install tarball
         src = pkgs.fetchurl {
           url = "https://download.tixati.com/tixati-${version}.x86_64.manualinstall.tar.gz";
-          sha256 = "e2KCRqNSfkmwBygc7rFlio2o4fI+59y03FPnrVwognI="; # run `nix-prefetch-url <URL>` to get this :contentReference[oaicite:1]{index=1}
+          sha256 = "13ywq4q64nax7hx1jfbgbsr9v3l7ddiqxrlydzjb8iymy2gl6fds"; # run `nix-prefetch-url <URL>` to get this :contentReference[oaicite:1]{index=1}
         };
         buildInputs = [
           pkgs.dbus # D-Bus IPC core :contentReference[oaicite:11]{index=11}
